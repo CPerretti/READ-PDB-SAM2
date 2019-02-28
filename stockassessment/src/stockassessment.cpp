@@ -132,5 +132,10 @@ Type objective_function<Type>::operator() ()
   ans += nllN(dataset, confset, paraset, logN, logF, keep, this);
 
   ans += nllObs(dataset, confset, paraset, logN, logF, keep,  this);
+  
+ //if() { // if logScale is a random effect, do this
+  //ans += nlllogScale(dataset, confset, paraset, logN, logF, keep, this);
+  //}
+    
   return ans;
 }

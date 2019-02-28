@@ -5,3 +5,4 @@
 #include "n.hpp"
 #include "predobs.hpp"
 #include "obs.hpp"
+#include "s.hpp"
