@@ -1,37 +1,37 @@
 template <class Type>
-Type nlllogScale(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, array<Type> &logN, array<Type> &logF, data_indicator<vector<Type>,Type> &keep, objective_function<Type> *of){ 
+Type nllS(confSet &conf, paraSet<Type> &par, array<Type> &logScale){ 
   Type nll=0;
-  int stateDimN=logN.dim[0]; // # n ages
-  int timeSteps=logN.dim[1]; // # n time steps
-  array<Type> resN(stateDimN,timeSteps-1); 
-  matrix<Type> nvar(stateDimN,stateDimN);
-  vector<Type> varLogN=exp(par.logSdLogN*Type(2.0));
-  for(int i=0; i<stateDimN; ++i){
-    for(int j=0; j<stateDimN; ++j){
-      if(i!=j){nvar(i,j)=0.0;}else{nvar(i,j)=varLogN(conf.keyVarLogN(i));}
+  int stateDimS=logScale.dim[0]; // # n ages
+  int timeSteps=logScale.dim[1]; // # n time steps
+  //array<Type> resN(stateDimS,timeSteps-1); 
+  matrix<Type> nvar(stateDimS,stateDimS);
+  vector<Type> varLogS=exp(1);//exp(par.logSdLogN*Type(2.0)); <-- MAKE THIS AS A PARAM EVENTUALLY!
+  for(int i=0; i<stateDimS; ++i){
+    for(int j=0; j<stateDimS; ++j){
+      if(i!=j){nvar(i,j)=0.0;}else{nvar(i,j)=varLogS;}//varLogN(conf.keyVarLogN(i));}
     }
   }
-  MVMIX_t<Type> neg_log_densityN(nvar,Type(conf.fracMixN));
-  Eigen::LLT< Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> > lltCovN(nvar);
-  matrix<Type> LN = lltCovN.matrixL();
-  matrix<Type> LinvN = LN.inverse();
+  MVMIX_t<Type> neg_log_densityS(nvar,Type(0));
+  //Eigen::LLT< Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> > lltCovS(nvar);
+  //matrix<Type> LS = lltCovS.matrixL();
+  //matrix<Type> LinvS = LS.inverse();
 
   for(int i = 1; i < timeSteps; ++i){ 
-    vector<Type> predN = predNFun(dat,conf,par,logN,logF,i); 
-    resN.col(i-1) = LinvN*(vector<Type>(logN.col(i)-predN));    
-    nll+=neg_log_densityN(logN.col(i)-predN); // N-Process likelihood 
-    SIMULATE_F(of){
-      if(conf.simFlag==0){
-        logN.col(i) = predN + neg_log_densityN.simulate();
-      }
-    }
+    vector<Type> predS = logScale.col(i-1);//predNFun(dat,conf,par,logN,logF,i); 
+    //resS.col(i-1) = LinvS*(vector<Type>(logScale.col(i)-predS));    
+    nll += neg_log_densityS(logScale.col(i)-predS); // N-Process likelihood 
+    // SIMULATE_F(of){
+    //   if(conf.simFlag==0){
+    //     logN.col(i) = predN + neg_log_densityN.simulate();
+    //   }
+    // }
   }
-  if(conf.resFlag==1){
-    ADREPORT_F(resN,of);
-  }
-  if(CppAD::Variable(keep.sum())){ // add wide prior for first state, but _only_ when computing ooa residuals
-    Type huge = 10;
-    for (int i = 0; i < stateDimN; i++) nll -= dnorm(logN(i, 0), Type(0), huge, true);  
-  } 
+  // if(conf.resFlag==1){
+  //   ADREPORT_F(resN,of);
+  // }
+  // if(CppAD::Variable(keep.sum())){ // add wide prior for first state, but _only_ when computing ooa residuals
+  //   Type huge = 10;
+  //   for (int i = 0; i < stateDimS; i++) nll -= dnorm(logN(i, 0), Type(0), huge, true);  
+  // } 
   return nll;
 }

@@ -104,13 +104,14 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(rec_loga); paraset.rec_loga=rec_loga;  
   PARAMETER_VECTOR(rec_logb); paraset.rec_logb=rec_logb;  
   PARAMETER_VECTOR(itrans_rho); paraset.itrans_rho=itrans_rho;  
-  PARAMETER_VECTOR(logScale); paraset.logScale=logScale; 
+  //PARAMETER_VECTOR(logScale); paraset.logScale=logScale; 
   PARAMETER_VECTOR(logitReleaseSurvival); paraset.logitReleaseSurvival=logitReleaseSurvival;    
   PARAMETER_VECTOR(logitRecapturePhi); paraset.logitRecapturePhi=logitRecapturePhi;    
 
   PARAMETER_ARRAY(logF); 
   PARAMETER_ARRAY(logN);
   PARAMETER_VECTOR(missing);
+  PARAMETER_ARRAY(logScale);
 
   // patch missing 
   int idxmis=0; 
@@ -130,7 +131,9 @@ Type objective_function<Type>::operator() ()
   ans += nllF(confset, paraset, logF, keep, this);
 
   ans += nllN(dataset, confset, paraset, logN, logF, keep, this);
-
+  
+  ans += nllS(confset, paraset, logScale); //nll for logScale (misreporting scale) 
+  
   ans += nllObs(dataset, confset, paraset, logN, logF, keep,  this);
   
  //if() { // if logScale is a random effect, do this
