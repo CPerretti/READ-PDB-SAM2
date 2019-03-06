@@ -103,6 +103,7 @@ Type jacobianDet(vector<Type> x,vector<Type> w){
 
 template <class Type>
 Type nllObs(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, array<Type> &logN, array<Type> &logF,
+            array<Type> &logScale,
 	    //vector<Type> &predObs, vector<Type> &varLogCatch,
 	    data_indicator<vector<Type>,Type> &keep, objective_function<Type> *of){
   using CppAD::abs;
@@ -135,7 +136,7 @@ Type nllObs(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, array<Type> &
   vector<Type> fbar = fbarFun(conf, logF);
   vector<Type> logfbar = log(fbar);
 
-  vector<Type> predObs = predObsFun(dat, conf, par, logN, logF, logssb, logfsb, logCatch, logLand);
+  vector<Type> predObs = predObsFun(dat, conf, par, logN, logF, logScale, logssb, logfsb, logCatch, logLand);
 
   
   // setup obs likelihoods

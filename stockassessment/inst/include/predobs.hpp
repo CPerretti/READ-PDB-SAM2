@@ -1,5 +1,5 @@
 template <class Type>
-vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, array<Type> &logN, array<Type> &logF, vector<Type> &logssb, vector<Type> &logfsb, vector<Type> &logCatch, vector<Type> &logLand){
+vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, array<Type> &logN, array<Type> &logF, array<Type> &logScale, vector<Type> &logssb, vector<Type> &logfsb, vector<Type> &logCatch, vector<Type> &logLand){
   vector<Type> pred(dat.nobs);
   pred.setZero();
 
@@ -15,7 +15,7 @@ vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, a
   }
 
   // Calculate predicted observations
-  int f, ft, a, y, yy, scaleIdx;  // a is no longer just ages, but an attribute (e.g. age or length) 
+  int f, ft, a, y;  // a is no longer just ages, but an attribute (e.g. age or length) 
   int minYear=dat.aux(0,0);
   Type zz=Type(0);
   for(int i=0;i<dat.nobs;i++){
@@ -37,17 +37,18 @@ vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, a
         if(conf.keyLogFsta(f-1,a)>(-1)){
           pred(i)+=logF(conf.keyLogFsta(0,a),y);
         }
-        scaleIdx=-1;
-        yy=dat.aux(i,0);
-        for(int j=0; j<conf.noScaledYears; ++j){
-          if(yy==conf.keyScaledYears(j)){
-            scaleIdx=conf.keyParScaledYA(j,a);
-            if(scaleIdx>=0){
-              pred(i)-=par.logScale(scaleIdx);
-            }
-            break;
-          }
-        }
+        pred(i) -= logScale(a,y); //<< THIS WAS CAUSING THE PROBLEM
+        //scaleIdx=-1;
+        //yy=dat.aux(i,0);
+        //for(int j=0; j<conf.noScaledYears; ++j){
+          //if(yy==conf.keyScaledYears(j)){
+            //scaleIdx=conf.keyParScaledYA(j,a);
+            //if(scaleIdx>=0){
+              //pred(i)-=par.logScale(scaleIdx);
+            //}
+            //break;
+          //}
+        //}
       break;
   
       case 1:

@@ -110,8 +110,9 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_ARRAY(logF); 
   PARAMETER_ARRAY(logN);
-  PARAMETER_VECTOR(missing);
   PARAMETER_ARRAY(logScale);
+  PARAMETER_VECTOR(missing);
+
 
   // patch missing 
   int idxmis=0; 
@@ -134,7 +135,7 @@ Type objective_function<Type>::operator() ()
   
   ans += nllS(confset, paraset, logScale); //nll for logScale (misreporting scale) 
   
-  ans += nllObs(dataset, confset, paraset, logN, logF, keep,  this);
+  ans += nllObs(dataset, confset, paraset, logN, logF, logScale, keep,  this);
   
  //if() { // if logScale is a random effect, do this
   //ans += nlllogScale(dataset, confset, paraset, logN, logF, keep, this);

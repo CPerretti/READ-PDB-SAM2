@@ -5,7 +5,8 @@ Type nllS(confSet &conf, paraSet<Type> &par, array<Type> &logScale){
   int timeSteps=logScale.dim[1]; // # n time steps
   //array<Type> resN(stateDimS,timeSteps-1); 
   matrix<Type> nvar(stateDimS,stateDimS);
-  vector<Type> varLogS=exp(1);//exp(par.logSdLogN*Type(2.0)); <-- MAKE THIS AS A PARAM EVENTUALLY!
+  //vector<Type> varLogN = exp(par.logSdLogN*Type(2.0));
+  Type varLogS=exp(Type(1.0));//exp(par.logSdLogN*Type(2.0)); <-- MAKE THIS AS A PARAM EVENTUALLY!
   for(int i=0; i<stateDimS; ++i){
     for(int j=0; j<stateDimS; ++j){
       if(i!=j){nvar(i,j)=0.0;}else{nvar(i,j)=varLogS;}//varLogN(conf.keyVarLogN(i));}
