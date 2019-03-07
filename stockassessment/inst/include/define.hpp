@@ -124,6 +124,7 @@ struct confSet{
   int maxAge;
   int maxAgePlusGroup;
   array<int> keyLogFsta;
+  array<int> keyLogScale;
   int corFlag;
   array<int> keyLogFpar;
   array<int> keyQpow;
@@ -153,6 +154,7 @@ struct confSet{
     maxAge = (int)*REAL(getListElement(x,"maxAge"));
     maxAgePlusGroup = (int)*REAL(getListElement(x,"maxAgePlusGroup"));
     keyLogFsta = asArray<int>(getListElement(x,"keyLogFsta"));
+    keyLogScale = asArray<int>(getListElement(x,"keyLogScale"));
     corFlag = (int)*REAL(getListElement(x,"corFlag"));
     keyLogFpar = asArray<int>(getListElement(x,"keyLogFpar"));
     keyQpow = asArray<int>(getListElement(x,"keyQpow"));
@@ -181,6 +183,7 @@ struct confSet{
     maxAge = rhs.maxAge; 
     maxAgePlusGroup = rhs.maxAgePlusGroup;
     keyLogFsta = rhs.keyLogFsta;
+    keyLogScale = rhs.keyLogScale;
     keyLogFpar = rhs.keyLogFpar;
     corFlag = rhs.corFlag;
     keyQpow = rhs.keyQpow;

@@ -34,10 +34,11 @@ vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, a
     switch(ft){
       case 0:
         pred(i)=logN(a,y)-log(zz)+log(1-exp(-zz));
-        if(conf.keyLogFsta(f-1,a)>(-1)){
-          pred(i)+=logF(conf.keyLogFsta(0,a),y);
+        if(conf.keyLogFsta(f-1,a)>(-1)) { // If there is fishing
+          pred(i) += logF(conf.keyLogFsta(0,a),y); // Fish
+          pred(i) -= logScale(conf.keyLogScale(0, a), y); // Misreport catch
         }
-        pred(i) -= logScale(a,y); //<< THIS WAS CAUSING THE PROBLEM
+        
         //scaleIdx=-1;
         //yy=dat.aux(i,0);
         //for(int j=0; j<conf.noScaledYears; ++j){
