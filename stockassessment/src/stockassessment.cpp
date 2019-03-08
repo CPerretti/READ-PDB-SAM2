@@ -97,7 +97,8 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(logFpar); paraset.logFpar=logFpar;  
   PARAMETER_VECTOR(logQpow); paraset.logQpow=logQpow;  
   PARAMETER_VECTOR(logSdLogFsta); paraset.logSdLogFsta=logSdLogFsta;  
-  PARAMETER_VECTOR(logSdLogN); paraset.logSdLogN=logSdLogN;  
+  PARAMETER_VECTOR(logSdLogN); paraset.logSdLogN=logSdLogN;
+  PARAMETER_VECTOR(logSdLogScale); paraset.logSdLogScale=logSdLogScale;
   PARAMETER_VECTOR(logSdLogObs); paraset.logSdLogObs=logSdLogObs; 
   PARAMETER_VECTOR(logSdLogTotalObs); paraset.logSdLogTotalObs=logSdLogTotalObs; 
   PARAMETER_VECTOR(transfIRARdist); paraset.transfIRARdist=transfIRARdist; //transformed distances for IRAR cor obs structure

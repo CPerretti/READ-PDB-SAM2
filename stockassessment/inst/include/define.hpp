@@ -129,7 +129,7 @@ struct confSet{
   array<int> keyLogFpar;
   array<int> keyQpow;
   array<int> keyVarF;
-  vector<int> keyVarLogN; 
+  vector<int> keyVarLogN;
   array<int> keyVarObs;
   vector<int> obsCorStruct; 
   array<int> keyCorObs;
@@ -214,7 +214,8 @@ struct paraSet{
   vector<Type> logFpar; 
   vector<Type> logQpow; 
   vector<Type> logSdLogFsta; 
-  vector<Type> logSdLogN; 
+  vector<Type> logSdLogN;
+  vector<Type> logSdLogScale;
   vector<Type> logSdLogObs;
   vector<Type> logSdLogTotalObs;
   vector<Type> transfIRARdist;
