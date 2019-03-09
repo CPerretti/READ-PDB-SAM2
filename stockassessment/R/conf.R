@@ -85,6 +85,7 @@ defcon<-function(dat){
     }
   }  
   ret$keyVarF <- x - 1
+  ret$keyVarLogScale <- x - 1
   ret$keyVarLogN <- c(1,rep(2,nAges-1)) - 1 
   x <- matrix(0, nrow=nFleets, ncol=nAges)
   lastMax <- 0

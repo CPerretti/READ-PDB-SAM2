@@ -73,15 +73,15 @@ Type objective_function<Type>::operator() ()
   DATA_IARRAY(keyLogFpar); confset.keyLogFpar=keyLogFpar; 
   DATA_IARRAY(keyQpow); confset.keyQpow=keyQpow; 
   DATA_IARRAY(keyVarF); confset.keyVarF=keyVarF; 
-  DATA_IVECTOR(keyVarLogN); confset.keyVarLogN=keyVarLogN;  
+  DATA_IVECTOR(keyVarLogN); confset.keyVarLogN=keyVarLogN;
+  DATA_IVECTOR(keyVarLogScale); confset.keyVarLogScale=keyVarLogScale;
   DATA_IARRAY(keyVarObs); confset.keyVarObs=keyVarObs; 
   DATA_FACTOR(obsCorStruct); confset.obsCorStruct=obsCorStruct;  
   DATA_IARRAY(keyCorObs); confset.keyCorObs=keyCorObs; 
   DATA_INTEGER(stockRecruitmentModelCode); confset.stockRecruitmentModelCode=stockRecruitmentModelCode; 
   DATA_INTEGER(noScaledYears); confset.noScaledYears=noScaledYears; 
-  DATA_IVECTOR(keyScaledYears); confset.keyScaledYears=keyScaledYears; 
-  DATA_IMATRIX(keyParScaledYA); 
-  confset.keyParScaledYA=keyParScaledYA; 
+  //DATA_IVECTOR(keyScaledYears); confset.keyScaledYears=keyScaledYears; 
+  //DATA_IMATRIX(keyParScaledYA); confset.keyParScaledYA=keyParScaledYA; 
   DATA_IVECTOR(fbarRange); confset.fbarRange=fbarRange; 
   DATA_IVECTOR(keyBiomassTreat); confset.keyBiomassTreat=keyBiomassTreat;   
   DATA_INTEGER(simFlag); confset.simFlag=simFlag;  //1 means simulations should not redo F and N
@@ -91,7 +91,7 @@ Type objective_function<Type>::operator() ()
   DATA_SCALAR(fracMixF); confset.fracMixF=asDouble(fracMixF); 
   DATA_SCALAR(fracMixN); confset.fracMixN=asDouble(fracMixN); 
   DATA_VECTOR(fracMixObs); vector<double> fracMixObsDouble(fracMixObs.size()); for(int i=0; i<fracMixObs.size(); ++i){fracMixObsDouble(i)=asDouble(fracMixObs(i));} confset.fracMixObs=fracMixObsDouble; 
-  DATA_IARRAY(keyLogScale); confset.keyLogScale=keyLogScale; 
+   
   
   paraSet<Type> paraset;
   PARAMETER_VECTOR(logFpar); paraset.logFpar=logFpar;  
