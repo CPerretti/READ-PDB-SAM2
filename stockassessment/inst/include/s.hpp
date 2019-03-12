@@ -6,9 +6,10 @@ Type nllS(confSet &conf, paraSet<Type> &par, array<Type> &logScale){
   //array<Type> resN(stateDimS,timeSteps-1); 
   matrix<Type> nvar(stateDimS,stateDimS);
   vector<Type> varLogScale=exp(par.logSdLogScale*Type(2.0));
+  
   for(int i=0; i<stateDimS; ++i){
     for(int j=0; j<stateDimS; ++j){
-      if(i!=j){nvar(i,j)=0.0;}else{nvar(i,j)=varLogScale(conf.keyVarLogScale(i));} ///<<< I THINK THIS IS THE PROBLEM AREA
+      if(i!=j){nvar(i,j)=0.0;}else{nvar(i,j)=varLogScale(conf.keyVarLogScale(i));}
                                             //varLogN(conf.keyVarLogN(i));}
     }
   }
@@ -16,10 +17,11 @@ Type nllS(confSet &conf, paraSet<Type> &par, array<Type> &logScale){
   //Eigen::LLT< Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> > lltCovS(nvar);
   //matrix<Type> LS = lltCovS.matrixL();
   //matrix<Type> LinvS = LS.inverse();
-
+  nll -= dnorm(varLogScale(0), Type(0), Type(0.1)); // Test of a prior on varLogScale
+  
   for(int i = 1; i < timeSteps; ++i){ 
     vector<Type> predS = logScale.col(i-1);//predNFun(dat,conf,par,logN,logF,i); 
-    //resS.col(i-1) = LinvS*(vector<Type>(logScale.col(i)-predS));    
+    //resS.col(i-1) = LinvS*(vector<Type>(logScale.col(i)-predS));
     nll += neg_log_densityS(logScale.col(i)-predS); // N-Process likelihood 
     // SIMULATE_F(of){
     //   if(conf.simFlag==0){

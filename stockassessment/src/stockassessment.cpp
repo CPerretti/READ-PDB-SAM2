@@ -68,7 +68,8 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(minAge); confset.minAge=minAge; 
   DATA_INTEGER(maxAge); confset.maxAge=maxAge; 
   DATA_INTEGER(maxAgePlusGroup); confset.maxAgePlusGroup=maxAgePlusGroup; 
-  DATA_IARRAY(keyLogFsta); confset.keyLogFsta=keyLogFsta; 
+  DATA_IARRAY(keyLogFsta); confset.keyLogFsta=keyLogFsta;
+  DATA_IARRAY(keyLogScale); confset.keyLogScale=keyLogScale;
   DATA_INTEGER(corFlag); confset.corFlag=corFlag; 
   DATA_IARRAY(keyLogFpar); confset.keyLogFpar=keyLogFpar; 
   DATA_IARRAY(keyQpow); confset.keyQpow=keyQpow; 
@@ -138,10 +139,6 @@ Type objective_function<Type>::operator() ()
   ans += nllS(confset, paraset, logScale); //nll for logScale (misreporting scale) 
   
   ans += nllObs(dataset, confset, paraset, logN, logF, logScale, keep,  this);
-  
- //if() { // if logScale is a random effect, do this
-  //ans += nlllogScale(dataset, confset, paraset, logN, logF, keep, this);
-  //}
     
   return ans;
 }
