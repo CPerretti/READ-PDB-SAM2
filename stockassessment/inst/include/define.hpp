@@ -136,7 +136,7 @@ struct confSet{
   array<int> keyCorObs;
   int stockRecruitmentModelCode;
   int noScaledYears;
-  //vector<int> keyScaledYears;
+  vector<int> keyScaledYears;
   //matrix<int> keyParScaledYA;
   vector<int> fbarRange;
   vector<int> keyBiomassTreat;
@@ -167,7 +167,7 @@ struct confSet{
     keyCorObs = asArray<int>(getListElement(x,"keyCorObs"));
     stockRecruitmentModelCode = (int)*REAL(getListElement(x,"stockRecruitmentModelCode"));
     noScaledYears = (int)*REAL(getListElement(x,"noScaledYears"));
-    //keyScaledYears = asVector<int>(getListElement(x,"keyScaledYears"));
+    keyScaledYears = asVector<int>(getListElement(x,"keyScaledYears"));
     //keyParScaledYA = asMatrix<int>(getListElement(x,"keyParScaledYA"));
     fbarRange = asVector<int>(getListElement(x,"fbarRange"));
     keyBiomassTreat = asVector<int>(getListElement(x,"keyBiomassTreat"));
@@ -197,7 +197,7 @@ struct confSet{
     keyCorObs = rhs.keyCorObs;
     stockRecruitmentModelCode = rhs.stockRecruitmentModelCode;
     noScaledYears = rhs.noScaledYears;
-    //keyScaledYears = rhs.keyScaledYears;
+    keyScaledYears = rhs.keyScaledYears;
     //keyParScaledYA = rhs.keyParScaledYA;
     fbarRange = rhs.fbarRange;
     keyBiomassTreat = rhs.keyBiomassTreat; 

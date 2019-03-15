@@ -29,7 +29,7 @@ defpar <- function(dat,conf){
   ret$logQpow=numeric(max(conf$keyQpow)+1)
   ret$logSdLogFsta=numeric(max(conf$keyVarF)+1)-.7
   ret$logSdLogN=numeric(max(conf$keyVarLogN)+1)-.35
-  ret$logSdLogScale = numeric(max(conf$keyVarLogScale)+1)-.35
+  ret$logSdLogScale = 0
   ret$logSdLogObs=numeric(max(conf$keyVarObs)+1)-.35
   ret$logSdLogTotalObs=numeric(sum(conf$obsLikelihoodFlag %in% c("ALN")))
   ret$transfIRARdist=if(all(is.na(conf$keyCorObs)))numeric(0) else numeric(max(conf$keyCorObs,na.rm=TRUE)+1)+0.05
@@ -40,7 +40,7 @@ defpar <- function(dat,conf){
   ret$itrans_rho=if(conf$corFlag==0){numeric(0)}else{numeric(1)+.5}
   ret$logScale=if(conf$noScaledYears==0){numeric(0)}else{matrix(data = 0, 
                                                                 nrow = max(conf$keyLogScale[1,]) + 1, 
-                                                                ncol = dat$noYears)}#else{numeric(max(conf$keyParScaledYA)+1)} #<<CP
+                                                                ncol = conf$noScaledYears)} #<<CP
   ret$logitReleaseSurvival=if(any(dat$fleetTypes==5)){numeric(length(unique(dat$aux[!is.na(dat$aux[,8]),8])))
                            }else{numeric(0)}
   ret$logitRecapturePhi=if(any(dat$fleetTypes==5)){numeric(length(ret$logitReleaseSurvival))

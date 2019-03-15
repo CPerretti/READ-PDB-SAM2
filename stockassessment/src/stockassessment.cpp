@@ -81,7 +81,7 @@ Type objective_function<Type>::operator() ()
   DATA_IARRAY(keyCorObs); confset.keyCorObs=keyCorObs; 
   DATA_INTEGER(stockRecruitmentModelCode); confset.stockRecruitmentModelCode=stockRecruitmentModelCode; 
   DATA_INTEGER(noScaledYears); confset.noScaledYears=noScaledYears; 
-  //DATA_IVECTOR(keyScaledYears); confset.keyScaledYears=keyScaledYears; 
+  DATA_IVECTOR(keyScaledYears); confset.keyScaledYears=keyScaledYears; 
   //DATA_IMATRIX(keyParScaledYA); confset.keyParScaledYA=keyParScaledYA; 
   DATA_IVECTOR(fbarRange); confset.fbarRange=fbarRange; 
   DATA_IVECTOR(keyBiomassTreat); confset.keyBiomassTreat=keyBiomassTreat;   

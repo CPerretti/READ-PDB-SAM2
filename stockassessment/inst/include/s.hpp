@@ -17,7 +17,7 @@ Type nllS(confSet &conf, paraSet<Type> &par, array<Type> &logScale){
   //Eigen::LLT< Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> > lltCovS(nvar);
   //matrix<Type> LS = lltCovS.matrixL();
   //matrix<Type> LinvS = LS.inverse();
-  nll -= dnorm(varLogScale(0), Type(0), Type(0.1)); // Test of a prior on varLogScale
+  //nll -= dnorm(par.logSdLogScale(0), Type(0), Type(0.1), true); // Try a prior on logSdLogScale
   
   for(int i = 1; i < timeSteps; ++i){ 
     vector<Type> predS = logScale.col(i-1);//predNFun(dat,conf,par,logN,logF,i); 
