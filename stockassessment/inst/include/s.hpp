@@ -10,7 +10,6 @@ Type nllS(confSet &conf, paraSet<Type> &par, array<Type> &logScale){
   for(int i=0; i<stateDimS; ++i){
     for(int j=0; j<stateDimS; ++j){
       if(i!=j){nvar(i,j)=0.0;}else{nvar(i,j)=varLogScale(conf.keyVarLogScale(i));}
-                                            //varLogN(conf.keyVarLogN(i));}
     }
   }
   MVMIX_t<Type> neg_log_densityS(nvar,Type(0));
