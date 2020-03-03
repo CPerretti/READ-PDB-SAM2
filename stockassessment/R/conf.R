@@ -33,7 +33,6 @@ setS<-function(x){
 ##' \item{obsCorStruct}{}
 ##' \item{keyCorObs}{}
 ##' \item{corFlag}{set to zero as a placeholder here.}
-##' \item{corFlagS}{}
 ##' \item{stockRecruitmentModelCode}{set to zero as a placeholder here.}
 ##' \item{noScaledYears}{set to zero as a placeholder here.}
 ##' \item{keyScaledYears}{a scalar set to zero as a placeholder here.}
@@ -67,7 +66,6 @@ defcon<-function(dat){
   }  
   ret$keyLogFsta <- x - 1
   ret$corFlag <- 2
-
   x <- matrix(0, nrow=nFleets, ncol=nAges)
   lastMax <- 0
   for(i in 1:nrow(x)){

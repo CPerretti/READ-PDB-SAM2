@@ -1,5 +1,5 @@
 template <class Type>
-vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, array<Type> &logN, array<Type> &logF, array<Type> &logS, vector<Type> &logssb, vector<Type> &logfsb, vector<Type> &logCatch, vector<Type> &logLand){
+vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, array<Type> &logN, array<Type> &logF, array<Type> &logScale, vector<Type> &logssb, vector<Type> &logfsb, vector<Type> &logCatch, vector<Type> &logLand){
   vector<Type> pred(dat.nobs);
   pred.setZero();
 
@@ -42,7 +42,7 @@ vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, a
         yy = dat.aux(i,0);
         for(int j=0; j<conf.noScaledYears; ++j){
           if (yy == conf.keyScaledYears(j)) { // If this year had misreporting
-            pred(i) -= logS(conf.keyLogScale(0, a), j); // Misreport
+            pred(i) -= logScale(conf.keyLogScale(0, a), j); // Misreport
             break;
           }
         }
