@@ -1,7 +1,7 @@
 #define REPORT_F(name,F)					\
 if(isDouble<Type>::value && F->current_parallel_region<0) {     \
   defineVar(install(#name),                                     \
-            PROTECT(asSEXP(name)),F->report);			\
+            PROTECT(asSEXP(name)),F->report);			                \
   UNPROTECT(1);                                                 \
 }
 
@@ -59,9 +59,9 @@ struct dataSet{
   array<Type> propF;
   array<Type> propM;
   vector<matrix<Type> > corList;
-dataSet() {};
-
-dataSet(SEXP x) {
+  dataSet() {};
+  
+  dataSet(SEXP x) {
     using tmbutils::asArray;
     noFleets = (int)*REAL(getListElement(x,"noFleets"));
     fleetTypes = asVector<int>(getListElement(x,"fleetTypes"));
@@ -88,7 +88,7 @@ dataSet(SEXP x) {
     propM = asArray<Type>(getListElement(x,"propM"));
     corList = listMatrixFromR<Type>(getListElement(x,"corList"));
   };
-
+  
   dataSet<Type>& operator=(const dataSet<Type>& rhs) {
     noFleets = rhs.noFleets;
     fleetTypes = rhs.fleetTypes; 
@@ -126,11 +126,12 @@ struct confSet{
   array<int> keyLogFsta;
   array<int> keyLogScale;
   int corFlag;
+  int corFlagS;
   array<int> keyLogFpar;
   array<int> keyQpow;
   array<int> keyVarF;
   vector<int> keyVarLogN;
-  vector<int> keyVarLogScale;
+  array<int> keyVarS;
   array<int> keyVarObs;
   vector<int> obsCorStruct; 
   array<int> keyCorObs;
@@ -145,10 +146,11 @@ struct confSet{
   vector<int> obsLikelihoodFlag;
   int fixVarToWeight;
   double fracMixF;
+  double fracMixS;
   double fracMixN;
   vector<double> fracMixObs;
   confSet() {};
-
+  
   confSet(SEXP x){
     using tmbutils::asArray;
     minAge = (int)*REAL(getListElement(x,"minAge"));
@@ -157,11 +159,12 @@ struct confSet{
     keyLogFsta = asArray<int>(getListElement(x,"keyLogFsta"));
     keyLogScale = asArray<int>(getListElement(x,"keyLogScale"));
     corFlag = (int)*REAL(getListElement(x,"corFlag"));
+    corFlagS = (int)*REAL(getListElement(x,"corFlagS"));
     keyLogFpar = asArray<int>(getListElement(x,"keyLogFpar"));
     keyQpow = asArray<int>(getListElement(x,"keyQpow"));
     keyVarF = asArray<int>(getListElement(x,"keyVarF"));
     keyVarLogN = asVector<int>(getListElement(x,"keyVarLogN"));
-    keyVarLogScale = asVector<int>(getListElement(x,"keyVarLogScale"));
+    keyVarS = asArray<int>(getListElement(x,"keyVarS"));
     keyVarObs = asArray<int>(getListElement(x,"keyVarObs"));
     obsCorStruct = asVector<int>(getListElement(x,"obsCorStruct"));
     keyCorObs = asArray<int>(getListElement(x,"keyCorObs"));
@@ -176,10 +179,11 @@ struct confSet{
     obsLikelihoodFlag = asVector<int>(getListElement(x,"obsLikelihoodFlag"));
     fixVarToWeight = (int)*REAL(getListElement(x,"fixVarToWeight"));
     fracMixF = (double)*REAL(getListElement(x,"fracMixF"));
+    fracMixS = (double)*REAL(getListElement(x,"fracMixS"));
     fracMixN = (double)*REAL(getListElement(x,"fracMixN"));
     fracMixObs = asVector<double>(getListElement(x,"fracMixObs"));
   };
-
+  
   confSet& operator=(const confSet& rhs) {
     minAge = rhs.minAge;
     maxAge = rhs.maxAge; 
@@ -188,10 +192,11 @@ struct confSet{
     keyLogScale = rhs.keyLogScale;
     keyLogFpar = rhs.keyLogFpar;
     corFlag = rhs.corFlag;
+    corFlagS = rhs.corFlagS;
     keyQpow = rhs.keyQpow;
     keyVarF = rhs.keyVarF;
     keyVarLogN = rhs.keyVarLogN;
-    keyVarLogScale = rhs.keyVarLogScale;
+    keyVarS = rhs.keyVarS;
     keyVarObs = rhs.keyVarObs;
     obsCorStruct = rhs.obsCorStruct;
     keyCorObs = rhs.keyCorObs;
@@ -206,6 +211,7 @@ struct confSet{
     obsLikelihoodFlag = rhs.obsLikelihoodFlag;
     fixVarToWeight = rhs.fixVarToWeight;
     fracMixF = rhs.fracMixF;
+    fracMixS = rhs.fracMixS;
     fracMixN = rhs.fracMixN;
     fracMixObs = rhs.fracMixObs;
     return *this;
@@ -218,15 +224,16 @@ struct paraSet{
   vector<Type> logQpow; 
   vector<Type> logSdLogFsta; 
   vector<Type> logSdLogN;
-  vector<Type> logSdLogScale;
+  vector<Type> logSdLogSsta;
   vector<Type> logSdLogObs;
   vector<Type> logSdLogTotalObs;
   vector<Type> transfIRARdist;
   vector<Type> sigmaObsParUS;
   vector<Type> rec_loga; 
   vector<Type> rec_logb; 
-  vector<Type> itrans_rho; 
-  vector<Type> logScale;
+  vector<Type> itrans_rho;
+  vector<Type> itrans_rhoS;
+  vector<Type> logS;
   vector<Type> logitReleaseSurvival;   
   vector<Type> logitRecapturePhi;   
 };
@@ -248,70 +255,71 @@ Type logdrobust(Type x, Type p){
   }
 }
 VECTORIZE2_tt(logdrobust)
-
-template <class Type>
-class MVMIX_t{
-  Type halfLogDetS;         
-  Type p1;                  /*fraction t3*/
-  matrix<Type> Sigma;       
-  vector<Type> sd;
-  matrix<Type> L_Sigma;
-  matrix<Type> inv_L_Sigma;
-public:
-  MVMIX_t(){}
-  MVMIX_t(matrix<Type> Sigma_, Type p1_){
-    setSigma(Sigma_);
-    p1=p1_;
-  }
-  matrix<Type> cov(){return Sigma;}
-  void setSigma(matrix<Type> Sigma_){
-    Sigma = Sigma_;
-    sd = sqrt(vector<Type>(Sigma.diagonal()));
-    Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > llt(Sigma);
-    L_Sigma = llt.matrixL();
-    vector<Type> D=L_Sigma.diagonal();
-    halfLogDetS = sum(log(D));
-    inv_L_Sigma = atomic::matinv(L_Sigma);
-  }
-  void setSigma(matrix<Type> Sigma_, Type p1_){
-    setSigma(Sigma_);
-    p1=p1_;
-  }
-  /** \brief Evaluate the negative log density */
-  Type operator()(vector<Type> x){
-    vector<Type> z = inv_L_Sigma*x;
-    return -sum(logdrobust(z,p1))+halfLogDetS;
-  }
-  Type operator()(vector<Type> x, vector<Type> keep){
-    matrix<Type> S = Sigma;
-    vector<Type> not_keep = Type(1.0) - keep;
-    for(int i = 0; i < S.rows(); i++){
-      for(int j = 0; j < S.cols(); j++){
-	S(i,j) = S(i,j) * keep(i) * keep(j);
-      }
-      //S(i,i) += not_keep(i) * pow((Type(1)-p1)*sqrt(Type(0.5)/M_PI)+p1*(Type(1)/M_PI),2); //(t(1))
-      S(i,i) += not_keep(i) * pow((Type(1)-p1)*sqrt(Type(0.5)/M_PI)+p1*(Type(2)/(M_PI*sqrt(Type(3)))),2);
+  
+  template <class Type>
+  class MVMIX_t{
+    Type halfLogDetS;         
+    Type p1;                  /*fraction t3*/
+    matrix<Type> Sigma;       
+    vector<Type> sd;
+    matrix<Type> L_Sigma;
+    matrix<Type> inv_L_Sigma;
+  public:
+    MVMIX_t(){}
+    MVMIX_t(matrix<Type> Sigma_, Type p1_){
+      setSigma(Sigma_);
+      p1=p1_;
     }
-    return MVMIX_t<Type>(S,p1)(x * keep);
-  }
-
-  vector<Type> simulate() {
-    int siz = Sigma.rows();
-    vector<Type> x(siz);
-    for(int i=0; i<siz; ++i){
-      Type u = runif(0.0,1.0);
-      if(u<p1){
-        x(i) = rt(3.0);
-      }else{
-        x(i) = rnorm(0.0,1.0);
-      }
+    matrix<Type> cov(){return Sigma;}
+    void setSigma(matrix<Type> Sigma_){
+      Sigma = Sigma_;
+      sd = sqrt(vector<Type>(Sigma.diagonal()));
+      Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > llt(Sigma);
+      L_Sigma = llt.matrixL();
+      vector<Type> D=L_Sigma.diagonal();
+      halfLogDetS = sum(log(D));
+      inv_L_Sigma = atomic::matinv(L_Sigma);
     }
-    x = L_Sigma*x;
-    return x;
+    void setSigma(matrix<Type> Sigma_, Type p1_){
+      setSigma(Sigma_);
+      p1=p1_;
+    }
+    /** \brief Evaluate the negative log density */
+    Type operator()(vector<Type> x){
+      vector<Type> z = inv_L_Sigma*x;
+      return -sum(logdrobust(z,p1))+halfLogDetS;
+    }
+    Type operator()(vector<Type> x, vector<Type> keep){
+      matrix<Type> S = Sigma;
+      vector<Type> not_keep = Type(1.0) - keep;
+      for(int i = 0; i < S.rows(); i++){
+        for(int j = 0; j < S.cols(); j++){
+          S(i,j) = S(i,j) * keep(i) * keep(j);
+        }
+        //S(i,i) += not_keep(i) * pow((Type(1)-p1)*sqrt(Type(0.5)/M_PI)+p1*(Type(1)/M_PI),2); //(t(1))
+        S(i,i) += not_keep(i) * pow((Type(1)-p1)*sqrt(Type(0.5)/M_PI)+p1*(Type(2)/(M_PI*sqrt(Type(3)))),2);
+      }
+      return MVMIX_t<Type>(S,p1)(x * keep);
+    }
+    
+    vector<Type> simulate() {
+      int siz = Sigma.rows();
+      vector<Type> x(siz);
+      for(int i=0; i<siz; ++i){
+        Type u = runif(0.0,1.0);
+        if(u<p1){
+          x(i) = rt(3.0);
+        }else{
+          x(i) = rnorm(0.0,1.0);
+        }
+      }
+      x = L_Sigma*x;
+      return x;
+    }
+  };
+  
+  template <class Type>
+  MVMIX_t<Type> MVMIX(matrix<Type> Sigma, Type p1){
+    return MVMIX_t<Type>(Sigma,p1);
   }
-};
-
-template <class Type>
-MVMIX_t<Type> MVMIX(matrix<Type> Sigma, Type p1){
-  return MVMIX_t<Type>(Sigma,p1);
-}
+  

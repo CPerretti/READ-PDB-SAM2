@@ -33,6 +33,7 @@ setS<-function(x){
 ##' \item{obsCorStruct}{}
 ##' \item{keyCorObs}{}
 ##' \item{corFlag}{set to zero as a placeholder here.}
+##' \item{corFlagS}{}
 ##' \item{stockRecruitmentModelCode}{set to zero as a placeholder here.}
 ##' \item{noScaledYears}{set to zero as a placeholder here.}
 ##' \item{keyScaledYears}{a scalar set to zero as a placeholder here.}
@@ -66,6 +67,7 @@ defcon<-function(dat){
   }  
   ret$keyLogFsta <- x - 1
   ret$corFlag <- 2
+  
   x <- matrix(0, nrow=nFleets, ncol=nAges)
   lastMax <- 0
   for(i in 1:nrow(x)){
@@ -100,16 +102,16 @@ defcon<-function(dat){
   ret$keyCorObs <- matrix(-1, nrow=nFleets, ncol=nAges-1)
   colnames(ret$keyCorObs)<-paste(minAge:(maxAge-1),(minAge+1):maxAge,sep="-")
   for(i in 1:nrow(x)){
-      if(ages[i,1]<ages[i,2]){
-        ret$keyCorObs[i,(ages[i,1]-minAge+1):(ages[i,2]-minAge)]<-NA
-      }
+    if(ages[i,1]<ages[i,2]){
+      ret$keyCorObs[i,(ages[i,1]-minAge+1):(ages[i,2]-minAge)]<-NA
+    }
   }
-    
+  
   ret$stockRecruitmentModelCode <- 0
   ret$noScaledYears <- 0
   ret$keyScaledYears <- numeric(0)
   ret$keyParScaledYA <- array(0,c(0,0))
-
+  
   cs <- colSums(dat$catchMeanWeight)
   ii <- min(which(dat$fleetTypes==0))
   tc <- tapply(dat$logobs[dat$aux[,2]==ii], INDEX=dat$aux[,3][dat$aux[,2]==ii], function(x)sum(x,na.rm=TRUE))
@@ -133,19 +135,19 @@ defcon<-function(dat){
 ##' @export
 saveConf <- function(x, file="", overwrite=FALSE){
   writeConf <- function(x,...) UseMethod("writeConf")
-
+  
   writeConf.default <- function(x,...){
     stop("Unimplemented class in writeConf")
   }
-
-   writeConf.integer <- function(x,...){
+  
+  writeConf.integer <- function(x,...){
     cat("\n",x,"\n",...)
   }
-
+  
   writeConf.numeric <- function(x,...){
     cat("\n",x,"\n",...)
   }
-
+  
   writeConf.matrix <- function(x,...){
     if(nrow(x)>0){
       cat(capture.output(prmatrix(x, rowlab=rep("", nrow(x)), collab=rep("   ",ncol(x)))), sep="\n", ...)
@@ -153,7 +155,7 @@ saveConf <- function(x, file="", overwrite=FALSE){
       cat("\n", ...)
     }
   }
-
+  
   writeConf.factor <- function(x,...){
     cat(" | Possible values are:", paste0('\"',levels(x),'\"'), ...)
     cat("\n", paste0('\"',x,'\"'),"\n", ...)
@@ -168,7 +170,7 @@ saveConf <- function(x, file="", overwrite=FALSE){
     cat("# Same number indicates same parameter used\n" , file=file, append=TRUE)
     cat("# Numbers (integers) starts from zero and must be consecutive\n#" , file=file, append=TRUE)
     #
-
+    
     txt<-list()
     txt$minAge <- "The minimium age class in the assessment"
     txt$maxAge <- "The maximum age class in the assessment"
@@ -197,11 +199,11 @@ saveConf <- function(x, file="", overwrite=FALSE){
     txt$fracMixObs <- "A vector with same length as number of fleets, where each element is the fraction of t(3) distribution used in the distribution of that fleet" 
     nam<-names(x)
     dummy<-lapply(1:length(nam), function(i){
-        cat('\n$', file=file, append=TRUE)
-        cat(nam[i], file=file, append=TRUE)
-        cat('\n#', txt[[nam[i]]], file=file, append=TRUE)
-        writeConf(x[[i]], file=file, append=TRUE)
-      }
+      cat('\n$', file=file, append=TRUE)
+      cat(nam[i], file=file, append=TRUE)
+      cat('\n#', txt[[nam[i]]], file=file, append=TRUE)
+      writeConf(x[[i]], file=file, append=TRUE)
+    }
     )
   }
 }
@@ -229,7 +231,7 @@ loadConf <- function(dat, file, patch=TRUE){
     ret
   }
   readConf <- function(x) UseMethod("readConf")
-
+  
   readConf.default <- function(x){
     stop("Unimplemented class in readConf")
   }

@@ -1,8 +1,8 @@
 template <class Type>
-vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, array<Type> &logN, array<Type> &logF, array<Type> &logScale, vector<Type> &logssb, vector<Type> &logfsb, vector<Type> &logCatch, vector<Type> &logLand){
+vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, array<Type> &logN, array<Type> &logF, array<Type> &logS, vector<Type> &logssb, vector<Type> &logfsb, vector<Type> &logCatch, vector<Type> &logLand){
   vector<Type> pred(dat.nobs);
   pred.setZero();
-
+  
   vector<Type> releaseSurvival(par.logitReleaseSurvival.size());
   vector<Type> releaseSurvivalVec(dat.nobs);
   if(par.logitReleaseSurvival.size()>0){
@@ -13,7 +13,7 @@ vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, a
       }
     }
   }
-
+  
   // Calculate predicted observations
   int f, ft, a, y, yy;  // a is no longer just ages, but an attribute (e.g. age or length) 
   int minYear=dat.aux(0,0);
@@ -30,82 +30,82 @@ vector<Type> predObsFun(dataSet<Type> &dat, confSet &conf, paraSet<Type> &par, a
         zz+=exp(logF(conf.keyLogFsta(0,a),y));
       }
     }    
-
+    
     switch(ft){
-      case 0:
-        pred(i)=logN(a,y)-log(zz)+log(1-exp(-zz));
-        if(conf.keyLogFsta(f-1,a)>(-1)) { // If there is fishing
-          pred(i) += logF(conf.keyLogFsta(0,a),y); // Fish
+    case 0:
+      pred(i)=logN(a,y)-log(zz)+log(1-exp(-zz));
+      if(conf.keyLogFsta(f-1,a)>(-1)) { // If there is fishing
+        pred(i) += logF(conf.keyLogFsta(0,a),y); // Fish
+      }
+      
+      
+      yy = dat.aux(i,0);
+      for(int j=0; j<conf.noScaledYears; ++j){
+        if (yy == conf.keyScaledYears(j)) { // If this year had misreporting
+          pred(i) -= logS(conf.keyLogScale(0, a), j); // Misreport
+          break;
         }
-        
-        
-        yy = dat.aux(i,0);
-        for(int j=0; j<conf.noScaledYears; ++j){
-          if (yy == conf.keyScaledYears(j)) { // If this year had misreporting
-            pred(i) -= logScale(conf.keyLogScale(0, a), j); // Misreport
-            break;
-          }
-        }
+      }
       break;
-  
-      case 1:
-  	error("Unknown fleet code");
-        return(0);
+      
+    case 1:
+      error("Unknown fleet code");
+      return(0);
       break;
-  
-      case 2:
-        pred(i)=logN(a,y)-zz*dat.sampleTimes(f-1);
-        if(conf.keyQpow(f-1,a)>(-1)){
-          pred(i)*=exp(par.logQpow(conf.keyQpow(f-1,a))); 
-        }
-        if(conf.keyLogFpar(f-1,a)>(-1)){
-          pred(i)+=par.logFpar(conf.keyLogFpar(f-1,a));
-        }
-        
+      
+    case 2:
+      pred(i)=logN(a,y)-zz*dat.sampleTimes(f-1);
+      if(conf.keyQpow(f-1,a)>(-1)){
+        pred(i)*=exp(par.logQpow(conf.keyQpow(f-1,a))); 
+      }
+      if(conf.keyLogFpar(f-1,a)>(-1)){
+        pred(i)+=par.logFpar(conf.keyLogFpar(f-1,a));
+      }
+      
       break;
-  
-      case 3:// biomass or catch survey
-        if(conf.keyBiomassTreat(f-1)==0){
-          pred(i) = logssb(y)+par.logFpar(conf.keyLogFpar(f-1,a));
-        }
-        if(conf.keyBiomassTreat(f-1)==1){
-          pred(i) = logCatch(y)+par.logFpar(conf.keyLogFpar(f-1,a));
-        }
-        if(conf.keyBiomassTreat(f-1)==2){
-          pred(i) = logfsb(y)+par.logFpar(conf.keyLogFpar(f-1,a));
-        }
-        if(conf.keyBiomassTreat(f-1)==3){
-          pred(i) = logCatch(y);
-        }
-        if(conf.keyBiomassTreat(f-1)==4){
-          pred(i) = logLand(y);
-        }
-	break;
-  
-      case 4:
-  	error("Unknown fleet code");
-        return 0;
+      
+    case 3:// biomass or catch survey
+      if(conf.keyBiomassTreat(f-1)==0){
+        pred(i) = logssb(y)+par.logFpar(conf.keyLogFpar(f-1,a));
+      }
+      if(conf.keyBiomassTreat(f-1)==1){
+        pred(i) = logCatch(y)+par.logFpar(conf.keyLogFpar(f-1,a));
+      }
+      if(conf.keyBiomassTreat(f-1)==2){
+        pred(i) = logfsb(y)+par.logFpar(conf.keyLogFpar(f-1,a));
+      }
+      if(conf.keyBiomassTreat(f-1)==3){
+        pred(i) = logCatch(y);
+      }
+      if(conf.keyBiomassTreat(f-1)==4){
+        pred(i) = logLand(y);
+      }
       break;
-  
-      case 5:// tags  
-        if((a+conf.minAge)>conf.maxAge){a=conf.maxAge-conf.minAge;} 
-	pred(i)=exp(log(dat.aux(i,6))+log(dat.aux(i,5))-logN(a,y)-log(1000))*releaseSurvivalVec(i);
+      
+    case 4:
+      error("Unknown fleet code");
+      return 0;
       break;
-  
-      case 6:
-  	error("Unknown fleet code");
-        return 0;
+      
+    case 5:// tags  
+      if((a+conf.minAge)>conf.maxAge){a=conf.maxAge-conf.minAge;} 
+      pred(i)=exp(log(dat.aux(i,6))+log(dat.aux(i,5))-logN(a,y)-log(1000))*releaseSurvivalVec(i);
       break;
-  
-      case 7:
-  	error("Unknown fleet code");
-        return 0;
+      
+    case 6:
+      error("Unknown fleet code");
+      return 0;
       break;
-  
-      default:
-  	error("Unknown fleet code");
-        return 0 ;
+      
+    case 7:
+      error("Unknown fleet code");
+      return 0;
       break;
+      
+    default:
+      error("Unknown fleet code");
+    return 0 ;
+    break;
     }    
   }
   return pred;
