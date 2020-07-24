@@ -91,7 +91,7 @@ Type objective_function<Type>::operator() ()
   DATA_FACTOR(obsLikelihoodFlag); confset.obsLikelihoodFlag=obsLikelihoodFlag;
   DATA_INTEGER(fixVarToWeight); confset.fixVarToWeight=fixVarToWeight;
   DATA_SCALAR(fracMixF); confset.fracMixF=asDouble(fracMixF);
-  DATA_SCALAR(fracMixS); confset.fracMixS=asDouble(fracMixS);
+  //DATA_SCALAR(fracMixS); confset.fracMixS=asDouble(fracMixS);
   DATA_SCALAR(fracMixN); confset.fracMixN=asDouble(fracMixN);
   DATA_VECTOR(fracMixObs); vector<double> fracMixObsDouble(fracMixObs.size()); for(int i=0; i<fracMixObs.size(); ++i){fracMixObsDouble(i)=asDouble(fracMixObs(i));} confset.fracMixObs=fracMixObsDouble;
   
@@ -112,6 +112,7 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(itrans_rhoS); paraset.itrans_rhoS=itrans_rhoS;
   PARAMETER_VECTOR(logitReleaseSurvival); paraset.logitReleaseSurvival=logitReleaseSurvival;
   PARAMETER_VECTOR(logitRecapturePhi); paraset.logitRecapturePhi=logitRecapturePhi;
+  PARAMETER_VECTOR(logitFracMixS); paraset.logitFracMixS=logitFracMixS;
   
   PARAMETER_ARRAY(logF);
   PARAMETER_ARRAY(logN);
@@ -138,7 +139,7 @@ Type objective_function<Type>::operator() ()
   
   ans += nllN(dataset, confset, paraset, logN, logF, keep, this);
   
-  ans += nllS(confset, paraset, logS); //nll for logScale (misreporting scale)
+  ans += nllS(confset, paraset, logS, keep, this); //nll for logScale (misreporting scale)
   
   ans += nllObs(dataset, confset, paraset, logN, logF, logS, keep,  this);
   

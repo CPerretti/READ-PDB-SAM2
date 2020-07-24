@@ -1,5 +1,5 @@
 template <class Type>
-Type nllS(confSet &conf, paraSet<Type> &par, array<Type> &logS){
+Type nllS(confSet &conf, paraSet<Type> &par, array<Type> &logS, data_indicator<vector<Type>,Type> &keep, objective_function<Type> *of){
   using CppAD::abs;
   Type nll=0;
   int stateDimS=logS.dim[0]; // # n ages
@@ -52,7 +52,8 @@ Type nllS(confSet &conf, paraSet<Type> &par, array<Type> &logS){
   }
   
   //density::MVNORM_t<Type> neg_log_densityS(svar);
-  MVMIX_t<Type> neg_log_densityS(svar,Type(conf.fracMixS));
+  Type fracMixS = invlogit(par.logitFracMixS(0));
+  MVMIX_t<Type> neg_log_densityS(svar, fracMixS);
   Eigen::LLT< Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> > lltCovS(svar);
   matrix<Type> LS = lltCovS.matrixL();
   matrix<Type> LinvS = LS.inverse();
@@ -61,6 +62,15 @@ Type nllS(confSet &conf, paraSet<Type> &par, array<Type> &logS){
     resS.col(i-1) = LinvS*(vector<Type>(logS.col(i)-logS.col(i-1)));    
     nll += neg_log_densityS(logS.col(i)-logS.col(i-1));
     
+  }
+  
+  if(conf.resFlag==1){
+    ADREPORT_F(resS,of);
+  }
+
+  if(CppAD::Variable(keep.sum())){ // add wide prior for first state, but _only_ when computing ooa residuals
+    Type huge = 10;
+    for (int i = 0; i < stateDimS; i++) nll -= dnorm(logS(i, 0), Type(0), huge, true);
   }
   
   return nll;
