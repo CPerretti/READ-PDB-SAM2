@@ -124,6 +124,7 @@ defcon<-function(dat){
   ret$fracMixF <- 0
   ret$fracMixN <- 0
   ret$fracMixObs <- rep(0,nFleets)
+  ret$fracMixS <- 0
   return(ret) 
 }
 
@@ -197,6 +198,7 @@ saveConf <- function(x, file="", overwrite=FALSE){
     txt$fracMixF <- "The fraction of t(3) distribution used in logF increment distribution" 
     txt$fracMixN <- "The fraction of t(3) distribution used in logN increment distribution"
     txt$fracMixObs <- "A vector with same length as number of fleets, where each element is the fraction of t(3) distribution used in the distribution of that fleet" 
+    txt$fracMixS<- "The fraction of t(3) distribution used in logS increment distribution"
     nam<-names(x)
     dummy<-lapply(1:length(nam), function(i){
       cat('\n$', file=file, append=TRUE)

@@ -21,7 +21,6 @@
 ##' \item{logSdSSB}{}
 ##' \item{logitReleaseSurvival}{}
 ##' \item{logitRecapturePhi}{}
-##' \item{itrans_fracMixS}{}
 ##' \item{logF}{}
 ##' \item{logN}{}
 ##' \item{logS}{}
@@ -46,7 +45,6 @@ defpar <- function(dat,conf){
   }else{numeric(0)}
   ret$logitRecapturePhi=if(any(dat$fleetTypes==5)){numeric(length(ret$logitReleaseSurvival))
   }else{numeric(0)}
-  ret$logitFracMixS=numeric(1)# - 1000 # - 1000 means fracMixS = 0
   ret$logF=matrix(0, nrow=max(conf$keyLogFsta)+1,ncol=dat$noYears)
   ret$logN=matrix(0, nrow=conf$maxAge-conf$minAge+1, ncol=dat$noYears)
   ret$logS=if(conf$noScaledYears==0){numeric(0)}else{matrix(data = 0, 

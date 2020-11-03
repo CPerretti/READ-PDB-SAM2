@@ -52,8 +52,7 @@ Type nllS(confSet &conf, paraSet<Type> &par, array<Type> &logS, data_indicator<v
   }
   
   //density::MVNORM_t<Type> neg_log_densityS(svar);
-  Type fracMixS = invlogit(par.logitFracMixS(0));
-  MVMIX_t<Type> neg_log_densityS(svar, fracMixS);
+  MVMIX_t<Type> neg_log_densityS(svar, Type(conf.fracMixS));
   Eigen::LLT< Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> > lltCovS(svar);
   matrix<Type> LS = lltCovS.matrixL();
   matrix<Type> LinvS = LS.inverse();

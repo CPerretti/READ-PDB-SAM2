@@ -146,9 +146,9 @@ struct confSet{
   vector<int> obsLikelihoodFlag;
   int fixVarToWeight;
   double fracMixF;
-  //double fracMixS;
   double fracMixN;
   vector<double> fracMixObs;
+  double fracMixS;
   confSet() {};
   
   confSet(SEXP x){
@@ -179,9 +179,9 @@ struct confSet{
     obsLikelihoodFlag = asVector<int>(getListElement(x,"obsLikelihoodFlag"));
     fixVarToWeight = (int)*REAL(getListElement(x,"fixVarToWeight"));
     fracMixF = (double)*REAL(getListElement(x,"fracMixF"));
-    //fracMixS = (double)*REAL(getListElement(x,"fracMixS"));
     fracMixN = (double)*REAL(getListElement(x,"fracMixN"));
     fracMixObs = asVector<double>(getListElement(x,"fracMixObs"));
+    fracMixS = (double)*REAL(getListElement(x,"fracMixS"));
   };
   
   confSet& operator=(const confSet& rhs) {
@@ -211,9 +211,9 @@ struct confSet{
     obsLikelihoodFlag = rhs.obsLikelihoodFlag;
     fixVarToWeight = rhs.fixVarToWeight;
     fracMixF = rhs.fracMixF;
-    //fracMixS = rhs.fracMixS;
     fracMixN = rhs.fracMixN;
     fracMixObs = rhs.fracMixObs;
+    fracMixS = rhs.fracMixS;
     return *this;
   };
 };
@@ -236,7 +236,6 @@ struct paraSet{
   vector<Type> logS;
   vector<Type> logitReleaseSurvival;   
   vector<Type> logitRecapturePhi;
-  vector<Type> logitFracMixS;
 };
 
 template<class Type>
